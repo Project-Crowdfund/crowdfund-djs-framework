@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2021",
+    "sourceMap": true,
+    "baseUrl": ".",
+    "outDir": "out/",
+  },
+  "exclude": ["node_modules", "out/"],
+  "include": ["src/*", "src/**/*"]
+}
