@@ -2,15 +2,19 @@
   "name": "crowdfund-framework",
   "version": "1.0.0",
   "description": "A framework for developing discord bots with Discord.js with minimal dependencies.",
-  "main": "out/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc --build",
-    "run-dev": "ts-node src/index.ts",
-    "run": "tsc --build && node out/index.js"
+    "start-dev": "ts-node src/index.ts",
+    "start": "tsc --build && node dist/index.js"
   },
-  "keywords": ["discord", "bot", "discordjs"],
+  "keywords": [
+    "discord",
+    "bot",
+    "discordjs"
+  ],
   "author": "Ubuntuify",
-  "license": "MIT",
+  "license": "GPLV3",
   "devDependencies": {
     "ts-node": "^10.9.1"
   },

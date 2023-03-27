@@ -1,15 +1,16 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 
-import {Client, Collection} from "discord.js";
+import {Collection} from "discord.js";
 
-import BaseModule from "src/classes/BaseModule";
+import App from "../App";
+import BaseModule from "../classes/BaseModule";
 
 export default class ModuleManager extends Collection<string, BaseModule> {
     private static readonly moduleDirectory: string = path.join(__dirname, "../modules");
-    private client: Client;
+    private readonly client: App;
 
-    public constructor(client: Client) {
+    public constructor(client: App) {
         super();
         this.client = client;
     }
@@ -24,7 +25,11 @@ export default class ModuleManager extends Collection<string, BaseModule> {
     }
 
     public async removeModule(name: string): Promise<void> {
-        this.get(name).destroy();
+        let module = this.get(name);
+        if (module == undefined) throw new ModuleNotFound("Could not remove module that does not exist.");
+
+        module.destroy(this.client);
+
         this.delete(name);
         console.log(`Removed module ${name}.`)
     }
@@ -34,7 +39,7 @@ export default class ModuleManager extends Collection<string, BaseModule> {
             .filter((file) => file.endsWith('.js') || file.endsWith('.ts'));
 
         for (const file of files) {
-            const filePath = path.join(ModuleManager.moduleDirectory);
+            const filePath = path.join(ModuleManager.moduleDirectory, file);
             try {
                 await this._importModule(filePath);
             } catch (error) {
@@ -45,10 +50,8 @@ export default class ModuleManager extends Collection<string, BaseModule> {
 
     /* Internal function for importing modules (doesn't check if the path is valid) */
     private async _importModule(path: string) {
-        let module = (await import(path)).default;
-        let instance: BaseModule = new module(this.client);
-
-        if (!(instance instanceof BaseModule)) throw new InvalidModule("Default import is not a subclass of BaseModule.");
+        const {default: module} = await import(path);
+        const instance: BaseModule = new module.default(this.client);
 
         this.set(instance.name, instance)
         console.log(`Imported module ${instance.name}`);
@@ -56,4 +59,7 @@ export default class ModuleManager extends Collection<string, BaseModule> {
 }
 
 class InvalidModule extends Error {
+}
+
+class ModuleNotFound extends Error {
 }

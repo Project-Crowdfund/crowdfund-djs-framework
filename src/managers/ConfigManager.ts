@@ -4,8 +4,10 @@ import * as path from "node:path";
 export default class ConfigManager {
     private static readonly configDirectory: string = path.join(__dirname + "/../../config");
 
+    public app?: appConfig;
+
     public static async parseAppConfig(configPath?: string): Promise<appConfig> {
-        if (configPath.length) configPath = path.join(this.configDirectory, "appconfig.json");
+        if (!configPath) configPath = path.join(this.configDirectory, "appconfig.json");
         return await this.getJSON(configPath);
     }
 
@@ -17,6 +19,7 @@ export default class ConfigManager {
 interface appConfig {
     token: {
         discord: string,
+        "discord-client-id": string;
     }
 }
 

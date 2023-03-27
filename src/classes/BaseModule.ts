@@ -1,18 +1,20 @@
+import App from "../App";
+
 export default abstract class BaseModule {
     public readonly name: string;
     public readonly version: string;
 
-    protected constructor(options: ModuleOptions) {
-        this.name = options.name;
-        this.version = options.version;
+    public readonly isCoreModule: boolean;
+
+    protected constructor(opt: ModuleOptions) {
+        this.name = opt.name;
+        this.version = opt.version;
+        this.isCoreModule = opt.features.isCoreModule || false;
     }
 
-    public initialize(): void {
-        throw new NotImplementedError("module initialize was not implemented.");
-    }
+    public abstract initialize(client: App): void;
 
-    public destroy(): void {
-    }
+    public abstract destroy(client: App): void;
 }
 
 export interface ModuleOptions {
@@ -20,8 +22,7 @@ export interface ModuleOptions {
     version: string,
     features: {
         hasSlashCommands?: boolean,
+        hasEvents?: boolean,
+        isCoreModule?: boolean,
     }
-}
-
-class NotImplementedError extends Error {
 }

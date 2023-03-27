@@ -1,4 +1,4 @@
-import App from "src/App";
+import App from "./App";
 
 import * as Discord from 'discord.js';
 
